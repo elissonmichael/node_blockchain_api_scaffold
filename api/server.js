@@ -18,4 +18,11 @@ app.post('/users', async (req, res) => {
     res.send(response);
 });
 
+app.put('/users/:id', async (req, res) => {
+    let network  = await fabric.connectToNetwork('admin');
+    let response = await network.contract.submitTransaction('updateUser', req.params.id, req.body.value);
+                   await network.gateway.disconnect();
+    res.send(response);
+});
+
 app.listen(8081, () => console.log(`Server Started on PORT 8081`));
