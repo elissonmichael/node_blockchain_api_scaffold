@@ -25,4 +25,11 @@ app.put('/users/:id', async (req, res) => {
     res.send(response);
 });
 
+app.delete('/users/:id', async (req, res) => {
+    let network  = await fabric.connectToNetwork('admin');
+    let response = await network.contract.submitTransaction('deleteUser', req.params.id);
+                   await network.gateway.disconnect();
+    res.status(204).send(response);
+});
+
 app.listen(8081, () => console.log(`Server Started on PORT 8081`));
