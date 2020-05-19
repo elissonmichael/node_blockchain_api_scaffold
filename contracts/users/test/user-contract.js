@@ -69,7 +69,7 @@ describe('UserContract', () => {
     describe('#readUser', () => {
 
         it('should return a user', async () => {
-            await contract.readUser(ctx, '1').should.eventually.deep.equal({ value: 'Test User' });
+            await contract.readUser(ctx, '1').should.eventually.deep.equal({ value: 'Test User', id: '1' });
         });
 
         it('should throw an error for a user that does not exist', async () => {

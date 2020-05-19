@@ -29,7 +29,8 @@ class UserContract extends Contract {
             throw new Error(`The user ${userId} does not exist`);
         }
         const buffer = await ctx.stub.getState(userId);
-        const asset = JSON.parse(buffer.toString());
+        const asset = JSON.parse(String(buffer));
+        asset.id = userId;
         return asset;
     }
 
