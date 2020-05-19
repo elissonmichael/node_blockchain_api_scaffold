@@ -38,18 +38,17 @@ describe('UserContract', () => {
     beforeEach(() => {
         contract = new UserContract();
         ctx = new TestContext();
-        ctx.stub.getState.withArgs('1001').resolves(Buffer.from('{"value":"user 1001 value"}'));
-        ctx.stub.getState.withArgs('1002').resolves(Buffer.from('{"value":"user 1002 value"}'));
+        ctx.stub.getState.withArgs('1').resolves(Buffer.from('{"value":"Test User"}'));
     });
 
     describe('#userExists', () => {
 
         it('should return true for a user', async () => {
-            await contract.userExists(ctx, '1001').should.eventually.be.true;
+            await contract.userExists(ctx, '1').should.eventually.be.true;
         });
 
         it('should return false for a user that does not exist', async () => {
-            await contract.userExists(ctx, '1003').should.eventually.be.false;
+            await contract.userExists(ctx, '3').should.eventually.be.false;
         });
 
     });
@@ -57,12 +56,12 @@ describe('UserContract', () => {
     describe('#createUser', () => {
 
         it('should create a user', async () => {
-            await contract.createUser(ctx, '1003', 'user 1003 value');
-            ctx.stub.putState.should.have.been.calledOnceWithExactly('1003', Buffer.from('{"value":"user 1003 value"}'));
+            await contract.createUser(ctx, '3', 'New User Value');
+            ctx.stub.putState.should.have.been.calledOnceWithExactly('3', Buffer.from('{"value":"New User Value"}'));
         });
 
         it('should throw an error for a user that already exists', async () => {
-            await contract.createUser(ctx, '1001', 'myvalue').should.be.rejectedWith(/The user 1001 already exists/);
+            await contract.createUser(ctx, '1', 'Same ID').should.be.rejectedWith(/The user 1 already exists/);
         });
 
     });
@@ -70,11 +69,11 @@ describe('UserContract', () => {
     describe('#readUser', () => {
 
         it('should return a user', async () => {
-            await contract.readUser(ctx, '1001').should.eventually.deep.equal({ value: 'user 1001 value' });
+            await contract.readUser(ctx, '1').should.eventually.deep.equal({ value: 'Test User' });
         });
 
         it('should throw an error for a user that does not exist', async () => {
-            await contract.readUser(ctx, '1003').should.be.rejectedWith(/The user 1003 does not exist/);
+            await contract.readUser(ctx, '3').should.be.rejectedWith(/The user 3 does not exist/);
         });
 
     });
@@ -82,12 +81,12 @@ describe('UserContract', () => {
     describe('#updateUser', () => {
 
         it('should update a user', async () => {
-            await contract.updateUser(ctx, '1001', 'user 1001 new value');
-            ctx.stub.putState.should.have.been.calledOnceWithExactly('1001', Buffer.from('{"value":"user 1001 new value"}'));
+            await contract.updateUser(ctx, '1', 'Updated User');
+            ctx.stub.putState.should.have.been.calledOnceWithExactly('1', Buffer.from('{"value":"Updated User"}'));
         });
 
         it('should throw an error for a user that does not exist', async () => {
-            await contract.updateUser(ctx, '1003', 'user 1003 new value').should.be.rejectedWith(/The user 1003 does not exist/);
+            await contract.updateUser(ctx, '3', 'user 1003 new value').should.be.rejectedWith(/The user 3 does not exist/);
         });
 
     });
@@ -95,12 +94,12 @@ describe('UserContract', () => {
     describe('#deleteUser', () => {
 
         it('should delete a user', async () => {
-            await contract.deleteUser(ctx, '1001');
-            ctx.stub.deleteState.should.have.been.calledOnceWithExactly('1001');
+            await contract.deleteUser(ctx, '1');
+            ctx.stub.deleteState.should.have.been.calledOnceWithExactly('1');
         });
 
         it('should throw an error for a user that does not exist', async () => {
-            await contract.deleteUser(ctx, '1003').should.be.rejectedWith(/The user 1003 does not exist/);
+            await contract.deleteUser(ctx, '3').should.be.rejectedWith(/The user 3 does not exist/);
         });
 
     });
